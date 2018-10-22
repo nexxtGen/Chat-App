@@ -5,15 +5,19 @@ const socketIo = require('socket.io');
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
+const UsersService = require('./UsersService');
+
+const usersService = new UsersService();
 
 app.use(express.static(`${__dirname}/public`));
 
-app.get('/', (req, res) =>{
+app.get('/', (req, res) => {
     res.sendFile(`${__dirname}/index.html`);
 });
 
-io.on('connection', (socket) =>{
-    socket.on('join', (name) =>{
+//Nasłuchiwanie na dołączenie usera do czatu i wykonywane akcje.
+io.on('connection', (socket) => {
+    socket.on('join', (name) => {
         usersService.addUser({
             id: socket.id,
             name
@@ -23,6 +27,27 @@ io.on('connection', (socket) =>{
         })
     })
 })
+
+//Funckcja która wykonuje się po utraceniu połączenia klienta z serwerem.(wyjście z app)
+io.on('connection', (socket) => {
+    socket.on('disconnect', () => {
+      usersService.removeUser(socket.id);
+      socket.broadcast.emit('update', {
+        users: usersService.getAllUsers()
+      });
+    });
+});
+
+// obsługa wysyłania wiadomości do użytkowników czatu
+io.on('connection', (socket)=>{
+    socket.on('message', (message)=>{
+        const {name} = usersService.getUserById(socket.id);
+        socket.broadcast.emit('message', {
+            text: message.text,
+            from: name
+        })
+    });
+});
 
 server.listen(3000, () => {
     console.log('listening on *:3000');
