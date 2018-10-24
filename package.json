@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "webpack-dev-server --hot --env development",
+    "build": "webpack --env production"
   },
   "repository": {
     "type": "git",
@@ -16,8 +18,28 @@
     "url": "https://github.com/nexxtGen/Chat-App/issues"
   },
   "homepage": "https://github.com/nexxtGen/Chat-App#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "html-webpack-plugin": "^3.2.0",
+    "optimize-js-plugin": "0.0.4",
+    "react-hot-loader": "^4.3.11",
+    "style-loader": "^0.23.0",
+    "webpack": "^4.20.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.9"
+  },
   "dependencies": {
     "express": "^4.16.4",
-    "socket.io": "^2.1.1"
+    "moment": "^2.22.2",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-moment": "^0.8.1",
+    "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
+    "uuid": "^3.3.2"
   }
 }
