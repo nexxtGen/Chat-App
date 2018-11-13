@@ -44,11 +44,13 @@ io.on('connection', (socket)=>{
         const {name} = usersService.getUserById(socket.id);
         socket.broadcast.emit('message', {
             text: message.text,
-            from: name
+            from: name,
+            id: message.id,
+            date: message.date
         })
     });
 });
 
-server.listen(3000, () => {
+server.listen(3001, () => { //3000 prędzej
     console.log('listening on *:3000');
 });
