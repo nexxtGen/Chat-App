@@ -48,6 +48,17 @@ class App extends Component {
         this.setState({name});
         socket.emit('join', name);
     }
+    // Delete message - potrzebne id wiadomosci + user - + zrobić kontroler w backendzie
+    // Mogę to robić jako callback- przesłać w emiter zaktualizowany stan wiadomości kliento do pozostałych,
+    // choc to rozwiązanie będzie obciażać serwer przy bardzo długiej liczbie wiadomosci w stanie.  
+    deleteMessage(name, id, from) {        
+        if (name == from) {
+            const actualMessages = this.state.messages.filter(message => message.id !== id);
+            this.setState({messages: actualMessages});
+        } 
+        
+    }
+    
     //render
     render() {
         return this.state.name !== '' ? this.renderLayout() : this.renderUserForm();
@@ -71,6 +82,8 @@ class App extends Component {
              <div className={styles.AppBody}>
                <UsersList
                  users={this.state.users}
+                 nameClient={this.state.name}
+                 deleteMessage={this.deleteMessage()}
                />
                <div className={styles.MessageWrapper}>
                  <MessageList
