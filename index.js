@@ -50,7 +50,15 @@ io.on('connection', (socket)=>{
         })
     });
 });
+// Obsługa usuwania wiadomosci po otrzymaniu id
+io.on('connection', (socket)=>{
+    socket.on('deleteMessageSocket', (id)=>{        
+        socket.broadcast.emit('deleteMessageSocket', {            
+            id: id            
+        })
+    });
+});
 
 server.listen(3001, () => { //3000 prędzej
-    console.log('listening on *:3000');
+    console.log('listening on *:3001');
 });

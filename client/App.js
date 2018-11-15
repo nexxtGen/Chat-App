@@ -27,6 +27,7 @@ class App extends Component {
     componentDidMount() {
         socket.on('message', message => this.messageReceive(message));
         socket.on('update', ({users}) => this.chatUpdate(users));
+        socket.on('deleteMessageSocket', id => this.deleteMessageSocket(id));
     }
     //Metody
     messageReceive(message) { // Metoda odbiera wiadomość i aktualizuje jej stan
@@ -51,14 +52,19 @@ class App extends Component {
     // Delete message - potrzebne id wiadomosci + user - + zrobić kontroler w backendzie
     // Mogę to robić jako callback- przesłać w emiter zaktualizowany stan wiadomości kliento do pozostałych,
     // choc to rozwiązanie będzie obciażać serwer przy bardzo długiej liczbie wiadomosci w stanie.  
-    deleteMessage(name, id, from) {        
-        if (name == from) {
-            const actualMessages = this.state.messages.filter(message => message.id !== id);
-            this.setState({messages: actualMessages});
-        } 
-        
+    //Lepiej przekazać do emitera id wiadomości która jest usuwana i obsłuzyc ją metodą
+    //Muszę stworzyć osobną metodę dla emitera, nie mogę użyć deleteMessage bo się chyba zapętli program.
+    //ver client
+    deleteMessage(id) {  
+        const actualMessages = this.state.messages.filter(message => message.id !== id);
+        this.setState({messages: actualMessages});
+        socket.emit('deleteMessageSocket', id);
     }
-    
+    // ver do backendu
+    deleteMessageSocket(id) {
+        const actualMessages = this.state.messages.filter(message => message.id !== id);
+        this.setState({messages: actualMessages});
+    }
     //render
     render() {
         return this.state.name !== '' ? this.renderLayout() : this.renderUserForm();
@@ -81,13 +87,13 @@ class App extends Component {
              </div>
              <div className={styles.AppBody}>
                <UsersList
-                 users={this.state.users}
-                 nameClient={this.state.name}
-                 deleteMessage={this.deleteMessage()}
+                 users={this.state.users}                 
                />
                <div className={styles.MessageWrapper}>
                  <MessageList
                    messages={this.state.messages}
+                   nameClient={this.state.name}
+                   deleteMessage={this.deleteMessage.bind(this)}
                  />
                  <MessageForm
                    onMessageSubmit={message => this.handleMessageSubmit(message)}
@@ -102,3 +108,8 @@ class App extends Component {
 };
 
 export default hot(module)(App);
+/*
+Problemem było przekazanie własciwości w złym miejscu metody rendr. Zamiast w messageList to zostały one przekazane w messageList.
+Muszę zwracać większą uwagę.
+
+ */

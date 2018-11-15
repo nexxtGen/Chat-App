@@ -3,13 +3,16 @@ import React from 'react';
 import styles from './MessageList.css';
 
 // id: props.id
-const Message = props => (
+const Message = props => (    
     <div className={styles.Message}>
       <strong>{props.from} :</strong>
-      <span>({props.date}):</span>    
+      <span>({props.date})</span>  
+      {
+        props.from == props.nameClient ? <button onClick={() => props.deleteMessage(props.id)}>X</button>    : ''
+      }  
       <span>{props.text}</span> 
-      <button onClick={() => props.deleteMessage(props.nameClient, props.id, props.from)}>X</button> 
-       
+      
+          
     </div>
 );
 
@@ -26,7 +29,7 @@ const MessageList = props => (
               id={message.id}
               date={message.date}
               nameClient={props.nameClient}
-              deleteMessage={props.deleteMessage}
+              deleteMessage={props.deleteMessage}              
             />
           );
         })
