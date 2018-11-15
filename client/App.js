@@ -27,7 +27,7 @@ class App extends Component {
     componentDidMount() {
         socket.on('message', message => this.messageReceive(message));
         socket.on('update', ({users}) => this.chatUpdate(users));
-        socket.on('deleteMessageSocket', id => this.deleteMessageSocket(id));
+        socket.on('deleteMessage', id => this.deleteMessage(id));
     }
     //Metody
     messageReceive(message) { // Metoda odbiera wiadomość i aktualizuje jej stan
@@ -55,13 +55,13 @@ class App extends Component {
     //Lepiej przekazać do emitera id wiadomości która jest usuwana i obsłuzyc ją metodą
     //Muszę stworzyć osobną metodę dla emitera, nie mogę użyć deleteMessage bo się chyba zapętli program.
     //ver client
-    deleteMessage(id) {  
+    handleDeleteMessage(id) {  
         const actualMessages = this.state.messages.filter(message => message.id !== id);
         this.setState({messages: actualMessages});
-        socket.emit('deleteMessageSocket', id);
+        socket.emit('deleteMessage', id);
     }
     // ver do backendu
-    deleteMessageSocket(id) {
+    deleteMessage(id) {
         const actualMessages = this.state.messages.filter(message => message.id !== id);
         this.setState({messages: actualMessages});
     }
@@ -93,7 +93,7 @@ class App extends Component {
                  <MessageList
                    messages={this.state.messages}
                    nameClient={this.state.name}
-                   deleteMessage={this.deleteMessage.bind(this)}
+                   deleteMessage={this.handleDeleteMessage.bind(this)}
                  />
                  <MessageForm
                    onMessageSubmit={message => this.handleMessageSubmit(message)}
